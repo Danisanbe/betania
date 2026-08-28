@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Betania — Dashboard del Parqueadero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0B0F;
+    --card:#15171D;
+    --card-hover:#191B22;
+    --border:#24262F;
+    --border-soft:#1C1E26;
+    --text:#F4F5F7;
+    --text-sec:#9297A3;
+    --text-muted:#5D6270;
+    --accent:#7C8CFF;
+    --accent-bg:rgba(124,140,255,0.12);
+    --accent-dark:#5A6AE8;
+    --green:#34D399;
+    --green-bg:rgba(52,211,153,0.12);
+    --red:#FB7185;
+    --red-bg:rgba(251,113,133,0.12);
+    --amber:#FBBF24;
+    --amber-bg:rgba(251,191,36,0.12);
+    --cian:#22D3EE;
+    --cian-bg:rgba(34,211,238,0.12);
+    --radius-lg:16px;
+    --radius-md:11px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .num, .display{font-family:'Space Grotesk',sans-serif;}
+
+  header{
+    border-bottom:1px solid var(--border-soft);
+    padding:24px 40px;
+  }
+  .header-inner{
+    max-width:1180px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .brand-row{display:flex; align-items:center; gap:13px;}
+  .logo-dot{
+    width:36px; height:36px; border-radius:10px;
+    background:var(--accent-bg);
+    border:1px solid rgba(124,140,255,0.3);
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .logo-dot svg{width:18px; height:18px; color:var(--accent);}
+  #nombre-negocio{
+    background:transparent;
+    border:none;
+    color:var(--text);
+    font-family:'Space Grotesk',sans-serif;
+    font-size:19px;
+    font-weight:600;
+    padding:0;
+    max-width:320px;
+  }
+  #nombre-negocio:focus{outline:none; color:var(--accent);}
+  .fecha{
+    font-size:12.5px;
+    color:var(--text-muted);
+    margin-top:2px;
+    text-transform:capitalize;
+  }
+
+  main{max-width:1180px; margin:0 auto; padding:32px 40px 60px;}
+
+  .banner{
+    background:var(--card);
+    border:1px solid var(--border-soft);
+    border-left:2px solid var(--accent);
+    border-radius:0 var(--radius-md) var(--radius-md) 0;
+    padding:13px 18px;
+    font-size:13px;
+    color:var(--text-sec);
+    margin-bottom:26px;
+    line-height:1.6;
+  }
+  .banner b{color:var(--text); font-weight:600;}
+
+  .toolbar{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:28px;
+  }
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    border-radius:9px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    padding:9px 16px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .btn:hover{border-color:#33363F; background:var(--card-hover);}
+  .btn.primario{
+    background:var(--accent);
+    color:#0A0B0F;
+    border:none;
+  }
+  .btn.primario:hover{background:#8F9EFF;}
+  #archivo-input{display:none;}
+  .estado-carga{font-size:12px; color:var(--text-muted);}
+
+  .campo-espacios{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:6px 6px 6px 14px;
+  }
+  .campo-espacios label{font-size:12.5px; color:var(--text-sec); white-space:nowrap;}
+  .campo-espacios input{
+    border:none;
+    background:var(--border-soft);
+    border-radius:6px;
+    width:52px;
+    padding:6px 8px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--text);
+    text-align:center;
+  }
+  .campo-espacios input:focus{outline:1px solid var(--accent);}
+
+  .grid-kpi{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:14px;
+    margin-bottom:36px;
+  }
+  .kpi{
+    background:var(--card);
+    border-radius:var(--radius-lg);
+    border:1px solid var(--border-soft);
+    padding:21px 23px;
+  }
+  .kpi-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;}
+  .kpi-icon{
+    width:34px; height:34px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .kpi-icon svg{width:17px; height:17px;}
+  .kpi.neutro .kpi-icon{background:var(--accent-bg); color:var(--accent);}
+  .kpi.verde .kpi-icon{background:var(--green-bg); color:var(--green);}
+  .kpi.rojo .kpi-icon{background:var(--red-bg); color:var(--red);}
+  .kpi.amarillo .kpi-icon{background:var(--amber-bg); color:var(--amber);}
+  .kpi.cian .kpi-icon{background:var(--cian-bg); color:var(--cian);}
+  .kpi .etiqueta{
+    font-size:12.5px;
+    color:var(--text-sec);
+    font-weight:500;
+  }
+  .kpi .num{
+    font-size:30px;
+    font-weight:600;
+    line-height:1;
+    letter-spacing:-0.3px;
+    margin-bottom:7px;
+  }
+  .kpi .sub{font-size:12.5px; color:var(--text-muted);}
+  .kpi-monto{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:17px;
+    font-weight:600;
+    line-height:1.3;
+    margin-bottom:1px;
+  }
+  .kpi-sublabel{font-size:11.5px; color:var(--text-muted);}
+  .kpi.verde .kpi-monto{color:var(--green);}
+  .kpi.rojo .kpi-monto{color:var(--red);}
+  .kpi.cian .kpi-monto{color:var(--cian);}
+  .kpi.verde .num{color:var(--green);}
+  .kpi.rojo .num{color:var(--red);}
+  .kpi.amarillo .num{color:var(--amber);}
+  .kpi.cian .num{color:var(--cian);}
+
+  section.tabla{
+    background:var(--card);
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius-lg);
+    padding:24px 24px 8px;
+    margin-bottom:24px;
+  }
+  .resumen-financiero{
+    background:var(--card);
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius-lg);
+    padding:24px 26px 22px;
+    margin-bottom:26px;
+  }
+  .rf-head h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:16.5px;
+    font-weight:600;
+    margin:0 0 4px 0;
+  }
+  .rf-head .desc{
+    font-size:12.5px;
+    color:var(--text-muted);
+    margin:0 0 20px 0;
+    line-height:1.5;
+    max-width:560px;
+  }
+  .rf-grid{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+  }
+  .rf-item{flex:1; min-width:150px;}
+  .rf-label{font-size:12px; color:var(--text-sec); margin-bottom:6px;}
+  .rf-monto{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:24px;
+    font-weight:600;
+    color:var(--text);
+    letter-spacing:-0.3px;
+  }
+  .rf-monto.rf-verde{color:var(--green);}
+  .rf-monto.rf-rojo{color:var(--red);}
+  .rf-op{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:22px;
+    color:var(--text-muted);
+    padding-top:18px;
+  }
+  .rf-barra{
+    margin-top:22px;
+    height:8px;
+    border-radius:20px;
+    background:var(--border-soft);
+    overflow:hidden;
+  }
+  .rf-barra-fill{
+    height:100%;
+    background:var(--green);
+    border-radius:20px;
+    width:0%;
+    transition:width .3s ease;
+  }
+  .rf-porcentaje{
+    margin-top:8px;
+    font-size:12px;
+    color:var(--text-muted);
+  }
+  .tabla-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:4px;
+  }
+  section.tabla h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:15.5px;
+    font-weight:600;
+    margin:0;
+  }
+  .conteo-badge{
+    font-family:'Inter',sans-serif;
+    font-size:11.5px;
+    font-weight:600;
+    background:var(--border-soft);
+    border-radius:20px;
+    padding:3px 11px;
+    color:var(--text-sec);
+  }
+  section.tabla .desc{
+    font-size:12.5px;
+    color:var(--text-muted);
+    margin:2px 0 16px 0;
+  }
+  .tabla-scroll{overflow-x:auto;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+    min-width:520px;
+  }
+  thead th{
+    text-align:left;
+    color:var(--text-muted);
+    font-weight:600;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    border-bottom:1px solid var(--border-soft);
+    padding:9px 12px;
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:12px 12px;
+    border-bottom:1px solid var(--border-soft);
+    color:var(--text);
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--card-hover);}
+  .placa-chip{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    background:var(--border-soft);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:3px 8px;
+    letter-spacing:0.5px;
+    white-space:nowrap;
+  }
+  .pill{
+    display:inline-block;
+    padding:4px 11px;
+    border-radius:20px;
+    font-size:11.5px;
+    font-weight:600;
+  }
+  .pill.pagado{background:var(--green-bg); color:var(--green);}
+  .pill.debe{background:var(--red-bg); color:var(--red);}
+  .pill.revisar{background:var(--amber-bg); color:var(--amber);}
+  .pill.favor{background:var(--cian-bg); color:var(--cian);}
+  .pill.cian{background:var(--cian-bg); color:var(--cian);}
+  .monto-saldo{color:var(--red); font-weight:600;}
+  .vacio{
+    color:var(--text-muted);
+    font-size:13px;
+    padding:26px 4px;
+    text-align:center;
+  }
+  .campo-buscar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--border-soft);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:11px 14px;
+  }
+  .campo-buscar svg{width:17px; height:17px; color:var(--text-muted); flex-shrink:0;}
+  .campo-buscar input{
+    border:none;
+    background:transparent;
+    outline:none;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    width:100%;
+  }
+  .campo-buscar input::placeholder{color:var(--text-muted);}
+
+  .panel-conexion{
+    background:var(--card);
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius-md);
+    padding:14px 16px;
+    margin-bottom:16px;
+  }
+  .conexion-fila{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .conexion-fila input{
+    flex:1;
+    border:1px solid var(--border);
+    background:var(--border-soft);
+    border-radius:8px;
+    padding:9px 12px;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    outline:none;
+  }
+  .conexion-fila input:focus{border-color:var(--accent);}
+  .conexion-estado{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+    font-size:12.5px;
+    color:var(--text-muted);
+  }
+  .punto-estado{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--text-muted);
+    flex-shrink:0;
+  }
+  .punto-estado.conectado{background:var(--green);}
+  .punto-estado.error{background:var(--red);}
+
+  .form-registro{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px;
+    align-items:end;
+    margin-top:6px;
+  }
+  .campo-form{display:flex; flex-direction:column; gap:6px;}
+  .campo-form-ancho{grid-column:span 2;}
+  .campo-form label{font-size:11.5px; color:var(--text-sec); font-weight:600;}
+  .campo-form input, .campo-form select{
+    border:1px solid var(--border);
+    background:var(--border-soft);
+    border-radius:8px;
+    padding:9px 11px;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    outline:none;
+  }
+  .campo-form input:focus, .campo-form select:focus{border-color:var(--accent);}
+  #btn-registrar{padding:10px 20px; height:38px;}
+  .registro-mensaje{
+    margin-top:14px;
+    font-size:13px;
+    padding:10px 12px;
+    border-radius:8px;
+    display:none;
+  }
+  .registro-mensaje.exito{display:block; background:var(--green-bg); color:var(--green);}
+  .registro-mensaje.fallo{display:block; background:var(--red-bg); color:var(--red);}
+  .panel-emailjs{
+    background:var(--border-soft);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+    margin:14px 0 4px;
+  }
+  footer{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:11.5px;
+    padding:10px 20px 40px;
+  }
+
+  @media print{
+    .toolbar, .banner{display:none;}
+    body{background:#fff; color:#000;}
+    .kpi, section.tabla{border:1px solid #ddd;}
+  }
+
+  @media (max-width: 620px){
+    .rf-op{display:none;}
+    .rf-grid{flex-direction:column; align-items:flex-start; gap:16px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="logo-dot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h1.5a2.5 2.5 0 0 1 5 0h5a2.5 2.5 0 0 1 5 0H23"/><path d="M3 17V9l2-5h10l4 5v8"/><circle cx="7" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="17" cy="17" r="1.5" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <div>
+        <input id="nombre-negocio" value="Betania" />
+        <div class="fecha" id="fecha-hoy"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="banner" id="banner-modo-manual">
+    <b>Cómo actualizar los datos:</b> en el Excel abre la hoja "Resumen", guárdala como CSV
+    (Archivo → Guardar como → CSV, solo hoja activa) y cárgala aquí con el botón de abajo.
+    Este dashboard solo lee el archivo, nunca modifica el Excel.
+  </div>
+
+  <div class="toolbar">
+    <button class="btn primario" id="btn-cargar">Cargar datos actualizados</button>
+    <input type="file" id="archivo-input" accept=".csv" />
+    <span class="estado-carga" id="estado-carga">Mostrando los datos que enviaste</span>
+    <div style="flex:1"></div>
+    <div class="campo-espacios">
+      <label for="input-espacios">Espacios totales</label>
+      <input type="number" id="input-espacios" min="0" value="90" />
+    </div>
+    <button class="btn" id="btn-imprimir">Imprimir / PDF</button>
+  </div>
+
+  <section class="tabla" id="seccion-registrar">
+    <div class="tabla-head">
+      <h2>Registrar pago o abono</h2>
+      <button class="btn" id="btn-config-correo" style="font-size:12px; padding:6px 12px;">Configurar correo</button>
+    </div>
+    <p class="desc">Envía un correo a la administración con el detalle y muestra aquí mismo cuánto queda debiendo. Esto NO modifica el Excel — hay que actualizarlo allá con esta información.</p>
+    <div class="panel-emailjs" id="panel-emailjs" style="display:none;">
+      <p class="desc" style="margin-top:0;">Estas tres claves se configuran una sola vez (salen de tu cuenta gratuita en emailjs.com) y quedan guardadas en este navegador.</p>
+      <div class="form-registro">
+        <div class="campo-form"><label>Service ID</label><input type="text" id="ej-service" placeholder="service_xxxxxxx" autocomplete="off" /></div>
+        <div class="campo-form"><label>Template ID</label><input type="text" id="ej-template" placeholder="template_xxxxxxx" autocomplete="off" /></div>
+        <div class="campo-form"><label>Public Key</label><input type="text" id="ej-publickey" placeholder="xxxxxxxxxxxxxxx" autocomplete="off" /></div>
+        <button class="btn primario" id="btn-guardar-config">Guardar</button>
+      </div>
+    </div>
+    <div class="form-registro">
+      <div class="campo-form">
+        <label>Placa</label>
+        <input list="lista-placas" id="reg-placa" placeholder="Ej: ABC123" autocomplete="off" />
+        <datalist id="lista-placas"></datalist>
+      </div>
+      <div class="campo-form">
+        <label>Tipo</label>
+        <select id="reg-tipo">
+          <option value="Pago">Pago completo</option>
+          <option value="Abono">Abono parcial</option>
+        </select>
+      </div>
+      <div class="campo-form">
+        <label>Monto</label>
+        <input type="number" id="reg-monto" placeholder="0" min="0" />
+      </div>
+      <div class="campo-form">
+        <label>Método</label>
+        <select id="reg-metodo">
+          <option value="Efectivo">Efectivo</option>
+          <option value="Transferencia">Transferencia</option>
+        </select>
+      </div>
+      <div class="campo-form campo-form-ancho">
+        <label>Observaciones (opcional)</label>
+        <input type="text" id="reg-obs" placeholder="Opcional" autocomplete="off" />
+      </div>
+      <button class="btn primario" id="btn-registrar">Registrar y enviar correo</button>
+    </div>
+    <div class="registro-mensaje" id="registro-mensaje"></div>
+    <button class="btn" id="btn-deshacer" style="display:none; margin-top:10px; font-size:12.5px; padding:7px 14px;">Deshacer este registro</button>
+  </section>
+
+  <div class="grid-kpi">
+    <div class="kpi neutro">
+      <div class="kpi-top">
+        <div class="etiqueta">Vehículos registrados</div>
+        <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h1.5a2.5 2.5 0 0 1 5 0h5a2.5 2.5 0 0 1 5 0H23"/><path d="M3 17V9l2-5h10l4 5v8"/><circle cx="7" cy="17" r="1.5" fill="currentColor" stroke="none"/><circle cx="17" cy="17" r="1.5" fill="currentColor" stroke="none"/></svg></div>
+      </div>
+      <div class="num" id="kpi-vehiculos">0</div>
+      <div class="sub" id="kpi-vehiculos-sub">de 0 espacios totales</div>
+    </div>
+
+    <div class="kpi amarillo">
+      <div class="kpi-top">
+        <div class="etiqueta">Espacios disponibles</div>
+        <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 4v6"/></svg></div>
+      </div>
+      <div class="num" id="kpi-espacios">0</div>
+      <div class="sub">libres ahora mismo</div>
+    </div>
+
+    <div class="kpi verde">
+      <div class="kpi-top">
+        <div class="etiqueta">Ya pagaron</div>
+        <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+      </div>
+      <div class="num" id="kpi-pagados">0</div>
+      <div class="sub"><span class="kpi-monto" id="kpi-pagados-monto">$0</span><br><span class="kpi-sublabel">recaudados este mes</span></div>
+    </div>
+
+    <div class="kpi rojo">
+      <div class="kpi-top">
+        <div class="etiqueta">Deben</div>
+        <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg></div>
+      </div>
+      <div class="num" id="kpi-deben">0</div>
+      <div class="sub"><span class="kpi-monto" id="kpi-deben-monto">$0</span><br><span class="kpi-sublabel">en deuda total</span></div>
+    </div>
+
+    <div class="kpi cian">
+      <div class="kpi-top">
+        <div class="etiqueta">Cobran esta semana</div>
+        <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg></div>
+      </div>
+      <div class="num" id="kpi-cobransemana">0</div>
+      <div class="sub"><span class="kpi-monto" id="kpi-cobransemana-monto">$0</span><br><span class="kpi-sublabel">por cobrar esta semana (incluye hoy)</span></div>
+    </div>
+  </div>
+
+  <section class="resumen-financiero">
+    <div class="rf-head">
+      <h2>Resumen financiero del mes</h2>
+      <p class="desc">La foto completa del dinero: cuánto debería haber entrado por las mensualidades, cuánto ha entrado en realidad (pagos completos + abonos), y cuánto falta.</p>
+    </div>
+    <div class="rf-grid">
+      <div class="rf-item">
+        <div class="rf-label">Debería haber a la fecha</div>
+        <div class="rf-monto" id="rf-esperado">$0</div>
+      </div>
+      <div class="rf-op">−</div>
+      <div class="rf-item">
+        <div class="rf-label">Se ha recaudado</div>
+        <div class="rf-monto rf-verde" id="rf-recaudado">$0</div>
+      </div>
+      <div class="rf-op">=</div>
+      <div class="rf-item">
+        <div class="rf-label">Falta por recaudar</div>
+        <div class="rf-monto rf-rojo" id="rf-falta">$0</div>
+      </div>
+    </div>
+    <div class="rf-barra"><div class="rf-barra-fill" id="rf-barra-fill"></div></div>
+    <div class="rf-porcentaje" id="rf-porcentaje">0% recaudado</div>
+  </section>
+
+  <section class="tabla">
+    <div class="tabla-head">
+      <h2>Deben pagar hoy</h2>
+      <span class="conteo-badge" id="badge-hoy">0</span>
+    </div>
+    <p class="desc">Vehículos cuyo día de cobro es hoy.</p>
+    <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Placa</th><th>Cliente</th><th>Teléfono</th><th>Mensualidad</th><th>Estado</th></tr></thead>
+        <tbody id="tbody-hoy"></tbody>
+      </table>
+    </div>
+    <div class="vacio" id="vacio-hoy" style="display:none;">No hay vehículos con cobro programado para hoy.</div>
+  </section>
+
+  <section class="tabla">
+    <div class="tabla-head">
+      <h2>Deben pagar esta semana</h2>
+      <span class="conteo-badge" id="badge-semana">0</span>
+    </div>
+    <p class="desc">Próximos 7 días, sin contar los de hoy. Ordenados por fecha más cercana.</p>
+    <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Placa</th><th>Cliente</th><th>Teléfono</th><th>Mensualidad</th><th>Cobra el</th></tr></thead>
+        <tbody id="tbody-semana"></tbody>
+      </table>
+    </div>
+    <div class="vacio" id="vacio-semana" style="display:none;">No hay cobros programados el resto de esta semana.</div>
+  </section>
+
+  <section class="tabla">
+    <div class="tabla-head">
+      <h2>Vehículos que deben</h2>
+      <span class="conteo-badge" id="badge-deben">0</span>
+    </div>
+    <p class="desc">Los 10 con mayor deuda. Usa el buscador de abajo para ver a alguien en particular.</p>
+    <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Placa</th><th>Cliente</th><th>Teléfono</th><th>Mensualidad</th><th>Pagado</th><th>Saldo</th></tr></thead>
+        <tbody id="tbody-deben"></tbody>
+      </table>
+    </div>
+    <div class="vacio" id="vacio-deben" style="display:none;">Nadie debe en este momento.</div>
+  </section>
+
+  <section class="tabla" id="seccion-buscar">
+    <div class="tabla-head">
+      <h2>Buscar un vehículo o cliente</h2>
+    </div>
+    <p class="desc">Escribe una placa, un nombre o un teléfono. El detalle completo de todos los vehículos vive en el Excel.</p>
+    <div class="campo-buscar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="input-buscar" placeholder="Ej: ABC123, Juan Perez, 3001234567" autocomplete="off" />
+    </div>
+    <div class="tabla-scroll" style="margin-top:14px;">
+      <table>
+        <thead><tr><th>Placa</th><th>Modelo</th><th>Cliente</th><th>Teléfono</th><th>Mensualidad</th><th>Pagado</th><th>Saldo</th><th>Estado</th></tr></thead>
+        <tbody id="tbody-buscar"></tbody>
+      </table>
+    </div>
+    <div class="vacio" id="vacio-buscar">Escribe algo arriba para ver el detalle de un vehículo o cliente.</div>
+  </section>
+
+</main>
+
+<footer>Dashboard local — los datos se leen del CSV que exportas del Excel. Nada se envía a internet.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+(function(){
+
+  var datosEjemplo = [{"placa": "USE394", "modelo": "Furgon mudanzas", "cliente": "LUZ MARY TORO/WALTER RAMIREZ", "telefono": "320 7561302/322 8590752", "pagoMensual": 140000, "totalPagado": 0, "saldo": 140000, "estado": "Debe", "diaCobro": 16}, {"placa": "NMB625", "modelo": "Desconocido", "cliente": "CRISTIAN ORNAMENTADOR", "telefono": "304 5363272", "pagoMensual": 90000, "totalPagado": 0, "saldo": 90000, "estado": "Debe", "diaCobro": 14}, {"placa": "SPU507", "modelo": "Buseta", "cliente": "RAFAEL GONZALEZ", "telefono": "321 5609583", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 5}, {"placa": "EKL832", "modelo": "Montero", "cliente": "RAFAEL GONZALEZ", "telefono": "321 5609583", "pagoMensual": 120000, "totalPagado": 0, "saldo": 120000, "estado": "Debe", "diaCobro": 5}, {"placa": "XAJ310", "modelo": "Camion", "cliente": "GREGORIO", "telefono": "310 3351980", "pagoMensual": 190000, "totalPagado": 0, "saldo": 190000, "estado": "Debe", "diaCobro": 22}, {"placa": "WFI564", "modelo": "Buseta", "cliente": "FABIO", "telefono": "", "pagoMensual": 75000, "totalPagado": 0, "saldo": 75000, "estado": "Debe", "diaCobro": null}, {"placa": "EQR066", "modelo": "Turbo", "cliente": "JAIRO C", "telefono": "317 5567635", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 20}, {"placa": "TSW426", "modelo": "", "cliente": "DANIEL ACOSTA COMOFU", "telefono": "3104812899", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 1}, {"placa": "SYS968", "modelo": "(14)", "cliente": "BUSETA ROJA FABIO ASTIILLO", "telefono": "3138898950", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 5}, {"placa": "XID877", "modelo": "", "cliente": "OSCAR MORA", "telefono": "3028372976", "pagoMensual": 180000, "totalPagado": 0, "saldo": 180000, "estado": "Debe", "diaCobro": 6}, {"placa": "ERL072A", "modelo": "", "cliente": "EDISON GUTIERREZ", "telefono": "3112183414", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 24}, {"placa": "EQY929", "modelo": "", "cliente": "EDISON GUTIERREZ", "telefono": "3112183414", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 21}, {"placa": "ERL072B", "modelo": "", "cliente": "EDISON GUTIERREZ", "telefono": "3112183414", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 9}, {"placa": "TSW830", "modelo": "(428)", "cliente": "JOSE AVILA", "telefono": "3144103838", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 8}, {"placa": "DRV542", "modelo": "SANRO GRIS / JTTA ROJO DBI399", "cliente": "JOSE AVILA", "telefono": "3144103838", "pagoMensual": 0, "totalPagado": 0, "saldo": 0, "estado": "Revisar", "diaCobro": 8}, {"placa": "QJX202A", "modelo": "Sencillo", "cliente": "LUIS MACIAS", "telefono": "3124806846", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 6}, {"placa": "XCI10G", "modelo": "Moto", "cliente": "MANUEL PUERTO", "telefono": "3164888704", "pagoMensual": 70000, "totalPagado": 0, "saldo": 70000, "estado": "Debe", "diaCobro": 11}, {"placa": "SZO895", "modelo": "(484)", "cliente": "NICOLAS ENRIQUEZ", "telefono": "3138591335", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 15}, {"placa": "BKA466", "modelo": "", "cliente": "GERMAN NAVARRETE", "telefono": "3115061368", "pagoMensual": 190000, "totalPagado": 0, "saldo": 190000, "estado": "Debe", "diaCobro": 15}, {"placa": "XID939", "modelo": "", "cliente": "TIBERIO", "telefono": "3115061368", "pagoMensual": 190000, "totalPagado": 0, "saldo": 190000, "estado": "Debe", "diaCobro": 20}, {"placa": "SKL519", "modelo": "", "cliente": "TIBERIO", "telefono": "3115061368", "pagoMensual": 190000, "totalPagado": 0, "saldo": 190000, "estado": "Debe", "diaCobro": 15}, {"placa": "UYO935", "modelo": "", "cliente": "GERMAN NAVARRETE", "telefono": "3115061368", "pagoMensual": 190000, "totalPagado": 0, "saldo": 190000, "estado": "Debe", "diaCobro": 30}, {"placa": "ESP01", "modelo": "Moto", "cliente": "(SIN NOMBRE)", "telefono": "", "pagoMensual": 70000, "totalPagado": 0, "saldo": 70000, "estado": "Debe", "diaCobro": 17}, {"placa": "WOH84Q", "modelo": "Moto", "cliente": "CAUCANO", "telefono": "", "pagoMensual": 70000, "totalPagado": 0, "saldo": 70000, "estado": "Debe", "diaCobro": 18}, {"placa": "ESP02", "modelo": "BICICLETA", "cliente": "BRANDON NIETO", "telefono": "3107923022", "pagoMensual": 30000, "totalPagado": 0, "saldo": 30000, "estado": "Debe", "diaCobro": 6}, {"placa": "KOK965", "modelo": "turbo", "cliente": "JAIRO CORONEL", "telefono": "317 5567635", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 11}, {"placa": "WLM455", "modelo": "", "cliente": "TRANSORIENTE ALEXANDER P", "telefono": "3027434422", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 9}, {"placa": "SNA761", "modelo": "CAMION POLLOS", "cliente": "NELSON PEREZ", "telefono": "3133442778", "pagoMensual": 190000, "totalPagado": 0, "saldo": 190000, "estado": "Debe", "diaCobro": 3}, {"placa": "QEH674", "modelo": "CARRO GRIS", "cliente": "CARRO GRIS", "telefono": "3244313244", "pagoMensual": 140000, "totalPagado": 0, "saldo": 140000, "estado": "Debe", "diaCobro": 12}, {"placa": "EQP138", "modelo": "COMOFU (418)", "cliente": "DAVID LOPEZ", "telefono": "3133418413", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 9}, {"placa": "WOL443", "modelo": "TURBO", "cliente": "HERNAN PANQUEVA", "telefono": "3135643129", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 14}, {"placa": "EKC187", "modelo": "CAMION POLLOS ROJO", "cliente": "NELSON PEREZ", "telefono": "3133442778", "pagoMensual": 190000, "totalPagado": 0, "saldo": 190000, "estado": "Debe", "diaCobro": 18}, {"placa": "LJU480", "modelo": "TURBO", "cliente": "EDGAR FLORES", "telefono": "3023767030", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 6}, {"placa": "TRL460", "modelo": "BUS la gloria", "cliente": "DIEGO MURILLO", "telefono": "3142382426", "pagoMensual": 190000, "totalPagado": 0, "saldo": 190000, "estado": "Debe", "diaCobro": 20}, {"placa": "DVF67G", "modelo": "MOTO", "cliente": "JAIME BELTRAN", "telefono": "3176381192", "pagoMensual": 80000, "totalPagado": 0, "saldo": 80000, "estado": "Debe", "diaCobro": 26}, {"placa": "QON744", "modelo": "TURBO", "cliente": "MULTICARGO", "telefono": "3244313244", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 14}, {"placa": "RIO212", "modelo": "", "cliente": "EFREN GONZALEZ", "telefono": "3104689888", "pagoMensual": 140000, "totalPagado": 0, "saldo": 140000, "estado": "Debe", "diaCobro": 4}, {"placa": "KJP384", "modelo": "", "cliente": "TWINGO BLANCO", "telefono": "", "pagoMensual": 130000, "totalPagado": 0, "saldo": 130000, "estado": "Debe", "diaCobro": 6}, {"placa": "ZVL367", "modelo": "MONTERO", "cliente": "DAVID LOPEZ", "telefono": "3133418413", "pagoMensual": 140000, "totalPagado": 0, "saldo": 140000, "estado": "Debe", "diaCobro": 1}, {"placa": "JOU736", "modelo": "COMOFU (501)", "cliente": "DAVID LOPEZ", "telefono": "3133418413", "pagoMensual": 130000, "totalPagado": 0, "saldo": 130000, "estado": "Debe", "diaCobro": 1}, {"placa": "KMB398", "modelo": "SANDERO GRIS", "cliente": "LUZ PEDREROS", "telefono": "3148632394", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 15}, {"placa": "IKZ054", "modelo": "FOR EXPLORER", "cliente": "EDGAR FLORES", "telefono": "3023767030", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 18}, {"placa": "SKY264", "modelo": "(63) COTRANSFUNZA", "cliente": "VICTOR ALDANA", "telefono": "3232051300", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 25}, {"placa": "SYU028", "modelo": "(68) COTRANSFUNZA", "cliente": "LUZ MARY TORO/WALTER RAMIREZ", "telefono": "320 7561302/322 8590752", "pagoMensual": 140000, "totalPagado": 0, "saldo": 140000, "estado": "Debe", "diaCobro": 25}, {"placa": "DXZ125", "modelo": "FRONTIER", "cliente": "ROBINSON GONZALEZ", "telefono": "3212196240", "pagoMensual": 130000, "totalPagado": 0, "saldo": 130000, "estado": "Debe", "diaCobro": 9}, {"placa": "GUR380", "modelo": "TURBO SENCILLA", "cliente": "EDWIN LEGUIZAMON", "telefono": "3147776521", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 11}, {"placa": "QOM484", "modelo": "TURBO SENSILLA NEGRA", "cliente": "ZULMA CRUZ", "telefono": "3155390780", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 22}, {"placa": "WPM200", "modelo": "TURBO SENCILLA BLANCA", "cliente": "ZULMA CRUZ", "telefono": "3155390780", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 23}, {"placa": "ELU455", "modelo": "CHEVROLET ROJO", "cliente": "JULIO CESAR PRIETO", "telefono": "3192966698", "pagoMensual": 130000, "totalPagado": 0, "saldo": 130000, "estado": "Debe", "diaCobro": 30}, {"placa": "TPQ202", "modelo": "BUSTA ROJA (102)", "cliente": "JHON GONZALEZ", "telefono": "3239395103", "pagoMensual": 140000, "totalPagado": 0, "saldo": 140000, "estado": "Debe", "diaCobro": 18}, {"placa": "TDL636", "modelo": "BUS", "cliente": "JORGE AGATON", "telefono": "3116260223", "pagoMensual": 200000, "totalPagado": 0, "saldo": 200000, "estado": "Debe", "diaCobro": 4}, {"placa": "KSO902", "modelo": "TURBO AHORA IZO051", "cliente": "OSCAR GALINDO", "telefono": "3142795811", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 2}, {"placa": "JMH08C", "modelo": "MOTO Y BICICLETA", "cliente": "JENNY CAMARGO", "telefono": "3212859869", "pagoMensual": 90000, "totalPagado": 0, "saldo": 90000, "estado": "Debe", "diaCobro": 27}, {"placa": "WOU443", "modelo": "BUSETA METRO EXPRESS", "cliente": "EDWIN PULIDO", "telefono": "3142437565", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 9}, {"placa": "TZS826", "modelo": "BUSETA ROJA (16)", "cliente": "HERMANO MACHETE", "telefono": "", "pagoMensual": 140000, "totalPagado": 0, "saldo": 140000, "estado": "Debe", "diaCobro": 10}, {"placa": "GTX627", "modelo": "FURGON BLANCO", "cliente": "DIEGO COLANTA", "telefono": "", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 18}, {"placa": "ZIF024", "modelo": "HIUNAY ROJO", "cliente": "JIMY", "telefono": "", "pagoMensual": 120000, "totalPagado": 0, "saldo": 120000, "estado": "Debe", "diaCobro": 3}, {"placa": "EDU790", "modelo": "CHVROLET ROJO", "cliente": "HOLLMAN SARMIENTO RUEDA", "telefono": "3224403511", "pagoMensual": 130000, "totalPagado": 0, "saldo": 130000, "estado": "Debe", "diaCobro": 25}, {"placa": "BLE686", "modelo": "NISSAN SENTRA GRIS", "cliente": "CRISTIAN GORDILLO", "telefono": "3118058608", "pagoMensual": 130000, "totalPagado": 0, "saldo": 130000, "estado": "Debe", "diaCobro": 24}, {"placa": "SZO696", "modelo": "CHANNA BLANCA", "cliente": "JOHANA SANCHEZ", "telefono": "3243525709", "pagoMensual": 130000, "totalPagado": 0, "saldo": 130000, "estado": "Debe", "diaCobro": 25}, {"placa": "CHM72I", "modelo": "MOTO", "cliente": "MAURICIO GOMEZ", "telefono": "3208268280", "pagoMensual": 80000, "totalPagado": 0, "saldo": 80000, "estado": "Debe", "diaCobro": 28}, {"placa": "TTZ259", "modelo": "TURBO", "cliente": "RAMIRO MENDEZ", "telefono": "3138890047", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 22}, {"placa": "RZH247", "modelo": "SPARK GRIS", "cliente": "OSCAR STIVEN ROMERO", "telefono": "3025487528", "pagoMensual": 130000, "totalPagado": 0, "saldo": 130000, "estado": "Debe", "diaCobro": 1}, {"placa": "UCM41G", "modelo": "MOTO", "cliente": "MIYER BETANCOURT", "telefono": "3112833432", "pagoMensual": 80000, "totalPagado": 0, "saldo": 80000, "estado": "Debe", "diaCobro": 3}, {"placa": "WLS026", "modelo": "TURBO", "cliente": "ZULMA CRUZ", "telefono": "3155390780", "pagoMensual": 170000, "totalPagado": 0, "saldo": 170000, "estado": "Debe", "diaCobro": 1}, {"placa": "GUU438", "modelo": "TURBO", "cliente": "MAURICIO OVIEDO", "telefono": "3508172397", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 6}, {"placa": "BCK888", "modelo": "HIUNDAY GRIS", "cliente": "JEFFERSON MENESES", "telefono": "3013555866", "pagoMensual": 130000, "totalPagado": 0, "saldo": 130000, "estado": "Debe", "diaCobro": 16}, {"placa": "WOT032", "modelo": "TURBO", "cliente": "DIEGO COLANTA", "telefono": "", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 18}, {"placa": "SPP521", "modelo": "TURBO", "cliente": "WILTON ALEXIS LOPEZ", "telefono": "", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 1}, {"placa": "WNX508", "modelo": "BUSE BLANCA", "cliente": "CARLOS SANCHEZ (AIRBUS)", "telefono": "3204792573", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 25}, {"placa": "GZI87", "modelo": "G MOTO", "cliente": "JUAN JIMENEZ", "telefono": "", "pagoMensual": 80000, "totalPagado": 0, "saldo": 80000, "estado": "Debe", "diaCobro": 5}, {"placa": "NHU228", "modelo": "TURBO", "cliente": "HERNAN PANQUEVA", "telefono": "3135643129", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 1}, {"placa": "LQK349", "modelo": "BUSTON", "cliente": "AGATON", "telefono": "", "pagoMensual": 200000, "totalPagado": 0, "saldo": 200000, "estado": "Debe", "diaCobro": 23}, {"placa": "ESP03", "modelo": "ASADERO DE POLLOS", "cliente": "ALEXANDER URREA", "telefono": "3228881946", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 8}, {"placa": "ESP04", "modelo": "ESPACIO MARMOLERIA", "cliente": "JOSE RINCON", "telefono": "3213061875", "pagoMensual": 700000, "totalPagado": 0, "saldo": 700000, "estado": "Debe", "diaCobro": 28}, {"placa": "ESP05", "modelo": "ESPACIO TALLER", "cliente": "PEDRO PULIDO", "telefono": "", "pagoMensual": 400000, "totalPagado": 0, "saldo": 400000, "estado": "Debe", "diaCobro": 10}, {"placa": "RET173", "modelo": "MEDIA MNSUALIDDAD HASTA EL 8 DE SEPTIEMBRE", "cliente": "CARRO ROJO", "telefono": "", "pagoMensual": 70000, "totalPagado": 0, "saldo": 70000, "estado": "Debe", "diaCobro": 24}, {"placa": "RDQ609", "modelo": "CAMIONETA 4X4", "cliente": "SISNEY", "telefono": "", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 12}, {"placa": "QJX202B", "modelo": "FOTON", "cliente": "LUIS MACIAS", "telefono": "3124806846", "pagoMensual": 160000, "totalPagado": 0, "saldo": 160000, "estado": "Debe", "diaCobro": 15}, {"placa": "HAU203", "modelo": "ZUZUKY", "cliente": "GUILLERMO JIMENEZ", "telefono": "3118408044", "pagoMensual": 140000, "totalPagado": 0, "saldo": 140000, "estado": "Debe", "diaCobro": 30}, {"placa": "FJT954", "modelo": "FRONTIER", "cliente": "NIRSA SERRANO", "telefono": "3133035172", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 24}, {"placa": "ESP06", "modelo": "ESPACIO LLANTAS", "cliente": "PABLO", "telefono": "", "pagoMensual": 150000, "totalPagado": 0, "saldo": 150000, "estado": "Debe", "diaCobro": 11}];
+
+  var datosActuales = datosEjemplo;
+
+  var fmtMoneda = new Intl.NumberFormat('es-CO', {style:'currency', currency:'COP', maximumFractionDigits:0});
+  var fechaEl = document.getElementById('fecha-hoy');
+  fechaEl.textContent = new Date().toLocaleDateString('es-ES', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+  var ESPACIOS_KEY = 'parqueadero_espacios_totales';
+  var NOMBRE_KEY = 'parqueadero_nombre';
+  var inputEspacios = document.getElementById('input-espacios');
+  var inputNombre = document.getElementById('nombre-negocio');
+
+  try {
+    var savedEspacios = localStorage.getItem(ESPACIOS_KEY);
+    if(savedEspacios) inputEspacios.value = savedEspacios;
+    var savedNombre = localStorage.getItem(NOMBRE_KEY);
+    if(savedNombre) inputNombre.value = savedNombre;
+  } catch(e) {}
+
+  inputEspacios.addEventListener('input', function(){
+    try { localStorage.setItem(ESPACIOS_KEY, inputEspacios.value); } catch(e) {}
+    render();
+  });
+  inputNombre.addEventListener('input', function(){
+    try { localStorage.setItem(NOMBRE_KEY, inputNombre.value); } catch(e) {}
+  });
+
+  document.getElementById('btn-imprimir').addEventListener('click', function(){ window.print(); });
+
+  var btnCargar = document.getElementById('btn-cargar');
+  var archivoInput = document.getElementById('archivo-input');
+  var estadoCarga = document.getElementById('estado-carga');
+
+  btnCargar.addEventListener('click', function(){ archivoInput.click(); });
+
+  archivoInput.addEventListener('change', function(ev){
+    var file = ev.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      try {
+        var parsed = parseCSV(e.target.result);
+        if(parsed.length === 0){
+          estadoCarga.textContent = 'El archivo no tiene datos reconocibles';
+          return;
+        }
+        datosActuales = parsed;
+        estadoCarga.textContent = 'Cargado: "' + file.name + '" — ' + new Date().toLocaleTimeString('es-ES');
+        render();
+      } catch(err){
+        estadoCarga.textContent = 'No se pudo leer el archivo: ' + err.message;
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+  });
+
+  function detectarDelimitador(linea){
+    var comas = (linea.match(/,/g)||[]).length;
+    var puntoComa = (linea.match(/;/g)||[]).length;
+    return puntoComa > comas ? ';' : ',';
+  }
+
+  function splitCSVLine(linea, delim){
+    var out = [];
+    var cur = '';
+    var enComillas = false;
+    for(var i=0;i<linea.length;i++){
+      var ch = linea[i];
+      if(ch === '"'){
+        enComillas = !enComillas;
+      } else if(ch === delim && !enComillas){
+        out.push(cur);
+        cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    out.push(cur);
+    return out.map(function(s){ return s.trim(); });
+  }
+
+  function norm(s){
+    return (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  }
+
+  function diasEnMes(anio, mesIndex){
+    return new Date(anio, mesIndex+1, 0).getDate();
+  }
+
+  function proximaFechaCobro(diaCobro, hoy0){
+    if(!diaCobro) return null;
+    var y = hoy0.getFullYear(), m = hoy0.getMonth();
+    var diaClamp = Math.min(diaCobro, diasEnMes(y,m));
+    var fechaEsteMes = new Date(y, m, diaClamp);
+    if(fechaEsteMes >= hoy0) return fechaEsteMes;
+    var m2 = m+1, y2 = y;
+    if(m2 > 11){ m2 = 0; y2 = y+1; }
+    var diaClamp2 = Math.min(diaCobro, diasEnMes(y2,m2));
+    return new Date(y2, m2, diaClamp2);
+  }
+
+  var fmtFecha = new Intl.DateTimeFormat('es-ES', {day:'numeric', month:'short'});
+
+  function numero(s){
+    if(s === undefined || s === null || s === '') return 0;
+    var limpio = s.toString().replace(/[^0-9.,-]/g,'');
+    if(limpio.indexOf(',') > -1 && limpio.indexOf('.') > -1){
+      limpio = limpio.replace(/,/g,'');
+    } else if(limpio.indexOf(',') > -1 && limpio.indexOf('.') === -1){
+      limpio = limpio.replace(',', '.');
+    }
+    var n = parseFloat(limpio);
+    return isNaN(n) ? 0 : n;
+  }
+
+  function parseCSV(texto){
+    var lineas = texto.split(/\r\n|\n|\r/).filter(function(l){ return l.trim() !== ''; });
+    if(lineas.length < 2) return [];
+    var delim = detectarDelimitador(lineas[0]);
+    var headersRaw = splitCSVLine(lineas[0], delim);
+    var headers = headersRaw.map(norm);
+
+    function col(nombres){
+      for(var i=0;i<nombres.length;i++){
+        var idx = headers.indexOf(norm(nombres[i]));
+        if(idx > -1) return idx;
+      }
+      return -1;
+    }
+
+    var iPlaca = col(['Placa']);
+    var iModelo = col(['Modelo']);
+    var iCliente = col(['Cliente']);
+    var iTelefono = col(['Telefono']);
+    var iPago = col(['Pago Mensual']);
+    var iPagado = col(['Total Pagado (mes actual)', 'Total Pagado']);
+    var iSaldo = col(['Saldo Pendiente']);
+    var iEstado = col(['Estado']);
+    var iDiaCobro = col(['Dia de Cobro']);
+
+    if(iPlaca === -1) throw new Error('No se encontró la columna "Placa". Verifica que exportaste la hoja Resumen.');
+
+    var out = [];
+    for(var r=1;r<lineas.length;r++){
+      var campos = splitCSVLine(lineas[r], delim);
+      var placa = campos[iPlaca];
+      if(!placa) continue;
+      var pago = iPago>-1 ? numero(campos[iPago]) : 0;
+      var pagado = iPagado>-1 ? numero(campos[iPagado]) : 0;
+      var saldo = iSaldo>-1 ? numero(campos[iSaldo]) : (pago - pagado);
+      var estado = iEstado>-1 ? campos[iEstado] : (saldo<=0 ? 'Pagado':'Debe');
+      var diaCobroTxt = iDiaCobro>-1 ? (campos[iDiaCobro]||'').trim() : '';
+      out.push({
+        placa: placa,
+        modelo: iModelo>-1 ? campos[iModelo] : '',
+        cliente: iCliente>-1 ? campos[iCliente] : '',
+        telefono: iTelefono>-1 ? campos[iTelefono] : '',
+        pagoMensual: pago,
+        totalPagado: pagado,
+        saldo: saldo,
+        estado: estado || (saldo<=0 ? 'Pagado':'Debe'),
+        diaCobro: diaCobroTxt ? numero(diaCobroTxt) : null
+      });
+    }
+    return out;
+  }
+
+  function escapeHtml(s){
+    return (s||'').toString().replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+
+  function claseEstado(estado){
+    var e = norm(estado);
+    if(e === 'pagado') return 'pagado';
+    if(e === 'revisar') return 'revisar';
+    if(e === 'saldo a favor') return 'favor';
+    return 'debe';
+  }
+
+  function etiquetaEstado(estado){
+    var e = norm(estado);
+    if(e === 'pagado') return 'Pago';
+    if(e === 'revisar') return 'Revisar';
+    if(e === 'saldo a favor') return 'Saldo a favor';
+    return 'Debe';
+  }
+
+  function render(){
+    var datos = datosActuales;
+    var totalEspacios = numero(inputEspacios.value);
+    var totalVehiculos = datos.length;
+    var espaciosDisp = Math.max(totalEspacios - totalVehiculos, 0);
+
+    var hoy0 = new Date();
+    hoy0.setHours(0,0,0,0);
+    datos.forEach(function(d){
+      d._proxima = proximaFechaCobro(d.diaCobro, hoy0);
+      if(d._proxima){
+        var diff = Math.round((d._proxima - hoy0) / 86400000);
+        d._esHoy = diff === 0;
+        d._esSemana = diff >= 0 && diff <= 6;
+      } else {
+        d._esHoy = false;
+        d._esSemana = false;
+      }
+    });
+
+    var pagados = datos.filter(function(d){ return norm(d.estado) === 'pagado' || norm(d.estado) === 'saldo a favor'; });
+    var deben = datos.filter(function(d){ return norm(d.estado) === 'debe'; });
+    var hoy = datos.filter(function(d){ return d._esHoy; });
+    var estaSemana = datos.filter(function(d){ return d._esSemana && !d._esHoy; })
+      .sort(function(a,b){ return a._proxima - b._proxima; });
+
+    var montoPagado = pagados.reduce(function(a,d){ return a + d.totalPagado; }, 0);
+    var montoDeuda = deben.reduce(function(a,d){ return a + Math.max(d.saldo,0); }, 0);
+
+    document.getElementById('kpi-vehiculos').textContent = totalVehiculos;
+    document.getElementById('kpi-vehiculos-sub').textContent = 'de ' + totalEspacios + ' espacios totales';
+    document.getElementById('kpi-espacios').textContent = espaciosDisp;
+    document.getElementById('kpi-pagados').textContent = pagados.length;
+    document.getElementById('kpi-pagados-monto').textContent = fmtMoneda.format(montoPagado);
+    document.getElementById('kpi-deben').textContent = deben.length;
+    document.getElementById('kpi-deben-monto').textContent = fmtMoneda.format(montoDeuda);
+    document.getElementById('kpi-cobransemana').textContent = hoy.length + estaSemana.length;
+    document.getElementById('kpi-cobransemana-monto').textContent = fmtMoneda.format(
+      hoy.reduce(function(a,d){ return a + d.pagoMensual; }, 0) +
+      estaSemana.reduce(function(a,d){ return a + d.pagoMensual; }, 0)
+    );
+
+    var totalEsperado = datos.filter(function(d){ return norm(d.estado) !== 'revisar'; })
+      .reduce(function(a,d){ return a + d.pagoMensual; }, 0);
+    var totalRecaudado = datos.reduce(function(a,d){ return a + d.totalPagado; }, 0);
+    var totalFalta = Math.max(totalEsperado - totalRecaudado, 0);
+    var pct = totalEsperado > 0 ? Math.round((totalRecaudado / totalEsperado) * 100) : 0;
+
+    document.getElementById('rf-esperado').textContent = fmtMoneda.format(totalEsperado);
+    document.getElementById('rf-recaudado').textContent = fmtMoneda.format(totalRecaudado);
+    document.getElementById('rf-falta').textContent = fmtMoneda.format(totalFalta);
+    document.getElementById('rf-barra-fill').style.width = Math.min(pct,100) + '%';
+    document.getElementById('rf-porcentaje').textContent = pct + '% recaudado';
+
+    document.getElementById('badge-hoy').textContent = hoy.length;
+    document.getElementById('badge-semana').textContent = estaSemana.length;
+    document.getElementById('badge-deben').textContent = deben.length;
+
+    var tHoy = document.getElementById('tbody-hoy');
+    tHoy.innerHTML = hoy.map(function(d){
+      return '<tr><td><span class="placa-chip">'+escapeHtml(d.placa)+'</span></td><td>'+escapeHtml(d.cliente)+'</td><td>'+escapeHtml(d.telefono)+'</td><td>'+fmtMoneda.format(d.pagoMensual)+'</td><td><span class="pill '+claseEstado(d.estado)+'">'+etiquetaEstado(d.estado)+'</span></td></tr>';
+    }).join('');
+    document.getElementById('vacio-hoy').style.display = hoy.length ? 'none' : 'block';
+
+    var tSemana = document.getElementById('tbody-semana');
+    tSemana.innerHTML = estaSemana.map(function(d){
+      return '<tr><td><span class="placa-chip">'+escapeHtml(d.placa)+'</span></td><td>'+escapeHtml(d.cliente)+'</td><td>'+escapeHtml(d.telefono)+'</td><td>'+fmtMoneda.format(d.pagoMensual)+'</td><td><span class="pill cian">'+fmtFecha.format(d._proxima)+'</span></td></tr>';
+    }).join('');
+    document.getElementById('vacio-semana').style.display = estaSemana.length ? 'none' : 'block';
+
+    var debenOrdenado = deben.slice().sort(function(a,b){ return b.saldo - a.saldo; });
+    var debenTop = debenOrdenado.slice(0, 10);
+    var tDeben = document.getElementById('tbody-deben');
+    tDeben.innerHTML = debenTop.map(function(d){
+      return '<tr><td><span class="placa-chip">'+escapeHtml(d.placa)+'</span></td><td>'+escapeHtml(d.cliente)+'</td><td>'+escapeHtml(d.telefono)+'</td><td>'+fmtMoneda.format(d.pagoMensual)+'</td><td>'+fmtMoneda.format(d.totalPagado)+'</td><td class="monto-saldo">'+fmtMoneda.format(d.saldo)+'</td></tr>';
+    }).join('');
+    document.getElementById('vacio-deben').style.display = deben.length ? 'none' : 'block';
+
+    renderBusqueda();
+  }
+
+  var inputBuscar = document.getElementById('input-buscar');
+  inputBuscar.addEventListener('input', renderBusqueda);
+
+  function renderBusqueda(){
+    var q = norm(inputBuscar.value);
+    var tBuscar = document.getElementById('tbody-buscar');
+    var vacio = document.getElementById('vacio-buscar');
+    var tabla = document.querySelector('#seccion-buscar table');
+
+    if(q.length < 2){
+      tBuscar.innerHTML = '';
+      vacio.textContent = 'Escribe algo arriba para ver el detalle de un vehículo o cliente.';
+      vacio.style.display = 'block';
+      tabla.style.display = 'none';
+      return;
+    }
+
+    var resultados = datosActuales.filter(function(d){
+      return norm(d.placa).indexOf(q) > -1 ||
+             norm(d.cliente).indexOf(q) > -1 ||
+             norm(d.telefono).indexOf(q) > -1 ||
+             norm(d.modelo).indexOf(q) > -1;
+    });
+
+    if(resultados.length === 0){
+      tBuscar.innerHTML = '';
+      vacio.textContent = 'No se encontró nada con "' + inputBuscar.value + '".';
+      vacio.style.display = 'block';
+      tabla.style.display = 'none';
+      return;
+    }
+
+    vacio.style.display = 'none';
+    tabla.style.display = '';
+    tBuscar.innerHTML = resultados.map(function(d){
+      return '<tr><td><span class="placa-chip">'+escapeHtml(d.placa)+'</span></td><td>'+escapeHtml(d.modelo)+'</td><td>'+escapeHtml(d.cliente)+'</td><td>'+escapeHtml(d.telefono)+'</td><td>'+fmtMoneda.format(d.pagoMensual)+'</td><td>'+fmtMoneda.format(d.totalPagado)+'</td><td>'+formatoSaldo(d.saldo)+'</td><td><span class="pill '+claseEstado(d.estado)+'">'+etiquetaEstado(d.estado)+'</span></td></tr>';
+    }).join('');
+  }
+
+  function formatoSaldo(saldo){
+    if(saldo < 0){
+      return '<span style="color:var(--cian); font-weight:600;">+' + fmtMoneda.format(Math.abs(saldo)) + '</span>';
+    }
+    return fmtMoneda.format(saldo);
+  }
+
+  // ---------- Configuracion de EmailJS (se guarda una sola vez) ----------
+  var EJ_SERVICE_KEY = 'parqueadero_ej_service';
+  var EJ_TEMPLATE_KEY = 'parqueadero_ej_template';
+  var EJ_PUBLIC_KEY = 'parqueadero_ej_public';
+
+  var panelEmailjs = document.getElementById('panel-emailjs');
+  var btnConfigCorreo = document.getElementById('btn-config-correo');
+  var inputEjService = document.getElementById('ej-service');
+  var inputEjTemplate = document.getElementById('ej-template');
+  var inputEjPublic = document.getElementById('ej-publickey');
+  var btnGuardarConfig = document.getElementById('btn-guardar-config');
+  var ejInicializado = false;
+
+  function credencialesEmailjs(){
+    try {
+      return {
+        service: localStorage.getItem(EJ_SERVICE_KEY) || '',
+        template: localStorage.getItem(EJ_TEMPLATE_KEY) || '',
+        publicKey: localStorage.getItem(EJ_PUBLIC_KEY) || ''
+      };
+    } catch(e){ return {service:'', template:'', publicKey:''}; }
+  }
+
+  function cargarConfigEnPanel(){
+    var c = credencialesEmailjs();
+    inputEjService.value = c.service;
+    inputEjTemplate.value = c.template;
+    inputEjPublic.value = c.publicKey;
+  }
+  cargarConfigEnPanel();
+  if(!credencialesEmailjs().publicKey){ panelEmailjs.style.display = ''; }
+
+  btnConfigCorreo.addEventListener('click', function(){
+    panelEmailjs.style.display = panelEmailjs.style.display === 'none' ? '' : 'none';
+  });
+
+  btnGuardarConfig.addEventListener('click', function(){
+    try {
+      localStorage.setItem(EJ_SERVICE_KEY, inputEjService.value.trim());
+      localStorage.setItem(EJ_TEMPLATE_KEY, inputEjTemplate.value.trim());
+      localStorage.setItem(EJ_PUBLIC_KEY, inputEjPublic.value.trim());
+    } catch(e){}
+    panelEmailjs.style.display = 'none';
+  });
+
+  function asegurarEmailjsListo(){
+    var c = credencialesEmailjs();
+    if(!c.publicKey || typeof emailjs === 'undefined') return false;
+    if(!ejInicializado){
+      emailjs.init(c.publicKey);
+      ejInicializado = true;
+    }
+    return true;
+  }
+
+  // ---------- Lista de placas para el buscador del formulario ----------
+  function actualizarListaPlacas(){
+    var lista = document.getElementById('lista-placas');
+    if(!lista) return;
+    lista.innerHTML = datosActuales.map(function(d){
+      return '<option value="'+escapeHtml(d.placa)+'">'+escapeHtml(d.cliente)+'</option>';
+    }).join('');
+  }
+  actualizarListaPlacas();
+
+  // ---------- Autocompletar el monto cuando es "Pago completo" ----------
+  var regPlacaInput = document.getElementById('reg-placa');
+  var regTipoSelect = document.getElementById('reg-tipo');
+  var regMontoInput = document.getElementById('reg-monto');
+
+  function autocompletarMonto(){
+    if(regTipoSelect.value !== 'Pago') return;
+    var placa = regPlacaInput.value.trim().toUpperCase();
+    var vehiculo = datosActuales.filter(function(d){ return d.placa === placa; })[0];
+    if(vehiculo){
+      regMontoInput.value = vehiculo.pagoMensual;
+    }
+  }
+  regPlacaInput.addEventListener('input', autocompletarMonto);
+  regTipoSelect.addEventListener('change', function(){
+    if(regTipoSelect.value === 'Pago'){
+      autocompletarMonto();
+    } else {
+      regMontoInput.value = '';
+    }
+  });
+
+  // ---------- Registrar pago / abono ----------
+  var btnRegistrar = document.getElementById('btn-registrar');
+  var registroMensaje = document.getElementById('registro-mensaje');
+  var ultimoRegistro = null;
+
+  btnRegistrar.addEventListener('click', function(){
+    var placa = document.getElementById('reg-placa').value.trim().toUpperCase();
+    var tipo = document.getElementById('reg-tipo').value;
+    var monto = numero(document.getElementById('reg-monto').value);
+    var metodo = document.getElementById('reg-metodo').value;
+    var obs = document.getElementById('reg-obs').value.trim();
+
+    registroMensaje.className = 'registro-mensaje';
+    if(!placa){
+      registroMensaje.className = 'registro-mensaje fallo';
+      registroMensaje.textContent = 'Escribe o selecciona una placa.';
+      return;
+    }
+    var vehiculo = datosActuales.filter(function(d){ return d.placa === placa; })[0];
+    if(!vehiculo){
+      registroMensaje.className = 'registro-mensaje fallo';
+      registroMensaje.textContent = 'Esa placa no está en la lista cargada. Revisa que esté bien escrita.';
+      return;
+    }
+    if(!monto || monto <= 0){
+      registroMensaje.className = 'registro-mensaje fallo';
+      registroMensaje.textContent = 'Escribe un monto mayor a 0.';
+      return;
+    }
+
+    var confirmado = window.confirm(
+      'Vas a registrar:\n\n' +
+      'Placa: ' + placa + '\n' +
+      'Cliente: ' + vehiculo.cliente + '\n' +
+      'Tipo: ' + tipo + '\n' +
+      'Monto: ' + fmtMoneda.format(monto) + '\n\n' +
+      '¿Es correcto? Si el cliente no coincide con quien pagó, dale Cancelar y revisa la placa.'
+    );
+    if(!confirmado){
+      registroMensaje.className = '';
+      registroMensaje.textContent = '';
+      return;
+    }
+
+    // Guarda una copia por si hay que deshacer este registro.
+    ultimoRegistro = {
+      vehiculo: vehiculo,
+      totalPagadoAntes: vehiculo.totalPagado || 0,
+      saldoAntes: vehiculo.saldo,
+      estadoAntes: vehiculo.estado
+    };
+
+    // Actualiza el saldo localmente (solo en esta pantalla) para saber cuanto queda debiendo.
+    // Esto NO se guarda en ningun lado: hay que pasarlo al Excel a mano con el correo que llega.
+    vehiculo.totalPagado = (vehiculo.totalPagado || 0) + monto;
+    vehiculo.saldo = vehiculo.pagoMensual - vehiculo.totalPagado;
+    if(vehiculo.pagoMensual === 0){
+      vehiculo.estado = 'Revisar';
+    } else if(vehiculo.saldo === 0){
+      vehiculo.estado = 'Pagado';
+    } else if(vehiculo.saldo > 0){
+      vehiculo.estado = 'Debe';
+    } else {
+      vehiculo.estado = 'Saldo a favor';
+    }
+
+    var resumenSaldo;
+    if(vehiculo.estado === 'Pagado'){
+      resumenSaldo = vehiculo.cliente + ' (' + placa + ') queda al día.';
+    } else if(vehiculo.estado === 'Saldo a favor'){
+      resumenSaldo = vehiculo.cliente + ' (' + placa + ') queda con saldo a favor de ' + fmtMoneda.format(Math.abs(vehiculo.saldo)) + '.';
+    } else {
+      resumenSaldo = vehiculo.cliente + ' (' + placa + ') todavía debe ' + fmtMoneda.format(Math.max(vehiculo.saldo,0)) + '.';
+    }
+
+    var c = credencialesEmailjs();
+    if(asegurarEmailjsListo()){
+      btnRegistrar.disabled = true;
+      btnRegistrar.textContent = 'Enviando...';
+      emailjs.send(c.service, c.template, {
+        placa: placa,
+        cliente: vehiculo.cliente,
+        tipo: tipo,
+        monto: fmtMoneda.format(monto),
+        metodo: metodo,
+        observaciones: obs || 'ninguna',
+        fecha: new Date().toLocaleString('es-CO'),
+        saldo_restante: fmtMoneda.format(Math.max(vehiculo.saldo,0)),
+        estado_nuevo: etiquetaEstado(vehiculo.estado)
+      }).then(function(){
+        btnRegistrar.disabled = false;
+        btnRegistrar.textContent = 'Registrar y enviar correo';
+        registroMensaje.className = 'registro-mensaje exito';
+        registroMensaje.textContent = tipo + ' de ' + fmtMoneda.format(monto) + ' anotado. Correo enviado. ' + resumenSaldo;
+        mostrarBotonDeshacer();
+        limpiarFormularioRegistro();
+        render();
+      }).catch(function(err){
+        btnRegistrar.disabled = false;
+        btnRegistrar.textContent = 'Registrar y enviar correo';
+        registroMensaje.className = 'registro-mensaje fallo';
+        registroMensaje.textContent = 'El correo no se pudo enviar (' + (err && err.text ? err.text : 'revisa la configuración') + '), pero aquí quedó anotado: ' + resumenSaldo;
+        mostrarBotonDeshacer();
+        limpiarFormularioRegistro();
+        render();
+      });
+    } else {
+      registroMensaje.className = 'registro-mensaje fallo';
+      registroMensaje.textContent = 'Falta configurar el correo (botón "Configurar correo" arriba). Por ahora solo quedó anotado aquí: ' + resumenSaldo;
+      mostrarBotonDeshacer();
+      limpiarFormularioRegistro();
+      render();
+    }
+  });
+
+  var btnDeshacer = document.getElementById('btn-deshacer');
+
+  function mostrarBotonDeshacer(){
+    btnDeshacer.style.display = '';
+  }
+
+  btnDeshacer.addEventListener('click', function(){
+    if(!ultimoRegistro) return;
+    var v = ultimoRegistro.vehiculo;
+    v.totalPagado = ultimoRegistro.totalPagadoAntes;
+    v.saldo = ultimoRegistro.saldoAntes;
+    v.estado = ultimoRegistro.estadoAntes;
+    registroMensaje.className = 'registro-mensaje';
+    registroMensaje.textContent = 'Se deshizo el último registro para ' + v.placa + ' (esto solo corrige lo que ves en pantalla — recuerda no copiar ese correo al Excel).';
+    btnDeshacer.style.display = 'none';
+    ultimoRegistro = null;
+    render();
+  });
+
+  function limpiarFormularioRegistro(){
+    document.getElementById('reg-placa').value = '';
+    document.getElementById('reg-monto').value = '';
+    document.getElementById('reg-obs').value = '';
+  }
+
+  render();
+})();
+</script>
+
+</body>
+</html>
